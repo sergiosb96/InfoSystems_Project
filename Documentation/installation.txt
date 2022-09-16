@@ -1,0 +1,35 @@
+
+
+Grafana:
+
+(Stack / Docker Compose)
+version: '3'
+
+volumes:
+  grafana-data:
+    driver: local
+
+services:
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - /portainer/Files/AppData/Config/grafana/data:/var/lib/grafana
+    restart: unless-stopped
+
+OpenTSDB:
+
+docker run --name opentsdb --network grafana_default --restart unless-stopped -dp 4242:4242 petergrace/opentsdb-docker
+
+Apache Flink:
+
+FLINK_PROPERTIES="jobmanager.rpc.address: jobmanager"
+docker network create flink-network
+docker run -d --name=jobmanager --restart unless-stopped --network flink-network --publish 8081:8081 --env FLINK_PROPERTIES="${FLINK_PROPERTIES}" flink:latest jobmanager
+docker run -d --name=taskmanager --restart unless-stopped --network flink-network --env FLINK_PROPERTIES="${FLINK_PROPERTIES}" flink:latest taskmanager
+
+RabbitMQ:
+
+docker run -d --name rabbitmq --restart unless-stopped --network flink-network -p 5672:5672 -p 5673:5673 -p 15672:15672 rabbitmq:3.10-management
