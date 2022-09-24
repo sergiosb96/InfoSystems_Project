@@ -1,0 +1,14 @@
+
+HBASE _ OPENTSDB:
+
+https://stackoverflow.com/questions/40262790/how-to-read-and-write-to-hbase-in-flink-streaming-job
+
+
+FLINK:
+
+https://nightlies.apache.org/flink/flink-docs-release-1.13/docs/deployment/overview/
+
+https://nightlies.apache.org/flink/flink-docs-release-1.13/docs/deployment/resource-providers/standalone/docker/#application-mode-on-docker
+
+RABBITMQ:
+

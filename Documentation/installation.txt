@@ -24,9 +24,10 @@ docker run --name opentsdb --network grafana_default --restart unless-stopped -d
 Apache Flink:
 
 FLINK_PROPERTIES="jobmanager.rpc.address: jobmanager"
-docker network create flink-network
-docker run -d --name=jobmanager --restart unless-stopped --network flink-network --publish 8081:8081 --env FLINK_PROPERTIES="${FLINK_PROPERTIES}" flink:latest jobmanager
-docker run -d --name=taskmanager --restart unless-stopped --network flink-network --env FLINK_PROPERTIES="${FLINK_PROPERTIES}" flink:latest taskmanager
+sudo docker network create flink-network
+sudo docker run -d --name=jobmanager --restart unless-stopped --network flink-network --publish 8081:8081 --env FLINK_PROPERTIES="${FLINK_PROPERTIES}" flink:1.13.6-scala_2.11 jobmanager
+sudo docker run -d --name=taskmanager --restart unless-stopped --network flink-network --env FLINK_PROPERTIES="${FLINK_PROPERTIES}" flink:1.13.6-scala_2.11 taskmanager
+sudo docker run -d --name=taskmanager2 --restart unless-stopped --network flink-network --env FLINK_PROPERTIES="${FLINK_PROPERTIES}" flink:1.13.6-scala_2.11 taskmanager
 
 RabbitMQ:
 
