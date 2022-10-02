@@ -1,0 +1,29 @@
+{
+  "name": "infosystems_project",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">\r \tThis project was part of the Analysis and Design of Information Systems course at NTUA.\r <p>",
+  "main": "publisher.js",
+  "scripts": {
+    "publish": "node publisher.js",
+    "consume": "node consumer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sergiosb96/InfoSystems_Project.git"
+  },
+  "author": "AZZY",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sergiosb96/InfoSystems_Project/issues"
+  },
+  "homepage": "https://github.com/sergiosb96/InfoSystems_Project#readme",
+  "dependencies": {
+    "apache-flink-statefun": "^3.2.0",
+    "express": "^4.18.1",
+    "flask": "^0.2.10",
+    "json": "^11.0.0",
+    "nodemon": "^2.0.20",
+    "random": "^3.0.6",
+    "requests": "^0.3.0"
+  }
+}

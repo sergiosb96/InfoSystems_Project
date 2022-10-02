@@ -9,7 +9,7 @@ MINS_INTERVAL = 0.004
 
 def main():
     # read all simulation data
-    with open('events.json', 'r') as f:
+    with open('data.json', 'r') as f:
         events = f.read().strip().split('\n')
 
     # for every event

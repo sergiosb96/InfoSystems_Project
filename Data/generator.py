@@ -21,7 +21,7 @@ import sys
 import json
 import random
 
-f = open("events.json", "w")
+f = open("data.json", "w")
 sys.stdout = f
 
 
