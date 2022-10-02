@@ -1,0 +1,2 @@
+RABBIT_HOST= '192.168.90.90'
+QUEUE_TOPIC = 'jobs'

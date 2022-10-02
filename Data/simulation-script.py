@@ -1,19 +1,13 @@
-import pika
+import requests
 import json
+import time
 
-# Connect to RabbitMQ and create channel
-connection = pika.BlockingConnection(pika.ConnectionParameters(host="192.168.90.90"))
-channel = connection.channel()
-
-# Declare and listen queue
-channel.queue_declare(queue="jobs", durable=True)
-URL = "http://192.168.90.90:15672/api/exchanges/jobs/publish"
+# kafka producer
+URL = "http://localhost:8765/events"
+# how many minutes the simulator waits in order to send again a new request
 MINS_INTERVAL = 0.004
 
-print(' [*] Waiting for messages. To exit press CTRL+C')
-
-
-def callback(ch, method, properties, body):
+def main():
     # read all simulation data
     with open('events.json', 'r') as f:
         events = f.read().strip().split('\n')
@@ -31,10 +25,9 @@ def callback(ch, method, properties, body):
         r = requests.post(url = URL, json = data)
         print("Response text is:", r.text)
         
-#        time.sleep(60 * MINS_INTERVAL)
+        time.sleep(60 * MINS_INTERVAL)
     
     print("Simulation completed.")
 
-# Listen and receive data from queue
-channel.basic_consume(queue='jobs', on_message_callback=callback, auto_ack=True)
-channel.start_consuming()
+if __name__ == "__main__":
+    main()

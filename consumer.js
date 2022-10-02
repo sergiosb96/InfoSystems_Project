@@ -1,6 +1,5 @@
 const amqp = require("amqplib");
 
-
 connect();
 async function connect() {
 
@@ -13,6 +12,8 @@ async function connect() {
 
             const input = JSON.parse(message.content.toString());
             console.log(`Received job with input ${input.number}`)
+            if (input.number === 7)
+                channel.ack(message);
         })
 
 
