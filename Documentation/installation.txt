@@ -1,6 +1,6 @@
 Grafana:
 
-(Stack / Docker Compose)
+(Docker Compose)
 version: '3'
 
 volumes:

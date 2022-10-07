@@ -1,14 +1,12 @@
-# Input Devices:
-#   sensorLight0, sensorLight1, sensorLight2
-#   sensorMotion0, sensorMotion1
-#   sensorTemp0, sensorTemp1
-#   sensorMagnet0, sensorMagnet1, sensorMagnet2
-#
-# Output devices:
-#   lamp0, lamp1, lamp2, lamp3, lamp4
-#   thermostat
-#   ac0, ac1
-#   switch0, switch1 
+# Devices:
+# sensorMotion0, sensorMotion1
+# sensorTemp0, sensorTemp1
+# sensorMagnet0, sensorMagnet1
+
+#|ID     |Location   |
+#|-------|-----------|
+#|0      |Fridge     |
+#|1      |Freezer    |
 
 import sys
 import json
@@ -20,25 +18,19 @@ sys.stdout = f
 
 days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-state = {"sensorLight0" : { "lm" : 0 }, 
-         "sensorLight1" : { "lm" : 0 }, 
-         "sensorLight2" : { "lm" : 0 }, 
-         "sensorMotion0" : { "status" : 0 }, 
+state = {"sensorMotion0" : { "status" : 0 }, 
          "sensorMotion1" : { "status" : 0 }, 
          "sensorTemp0" : { "temp" : 0, "tempDif" : 0 }, 
          "sensorTemp1" : { "temp" : 0, "tempDif" : 0 }, 
          "sensorMagnet0" : { "status" : 0 }, 
-         "sensorMagnet1" : { "status" : 0 }, 
-         "sensorMagnet2" : { "status" : 0 },
-}
-
+         "sensorMagnet1" : { "status" : 0 } }
 
 def print_state(state):
     print('{',end=' ')
     for k,v in state.items():
         print(json.dumps(k),' : ',sep='', end='')
         print(json.dumps(v), end='')
-        if(k!='alarm'):
+        if(k!='sensorMagnet1'):
             print(', ',end='')
     if (days.index(day) == 6 and hour==23 and mins==45):
         print('}')
@@ -46,50 +38,31 @@ def print_state(state):
         print('},')
     return
 
-
-def sensorLights(state): # light from 6:00 until 20:45 everyday
-    if(hour <= 5 or hour >= 21):
-        state["sensorLight0"]["lm"] = 0
-        state["sensorLight1"]["lm"] = 0
-    else:
-        state["sensorLight0"]["lm"] = 1000 - 130*( abs(hour - 13.5 + mins/60) )
-        state["sensorLight1"]["lm"] = 1000 - 130*( abs(hour - 13.5 + mins/60) )
-    return
-
-
-def sensorMotion1(state): # Motion sensor in the living room can be triggered by John between 8:00 -8:30 and 17:30-00:00 on weekdays and between 9:00-24:00 on weekends
-    state["sensorMotion1"]["status"] = 0
-    if days.index(day) <= 4: 
-        if ((hour + mins/60) >= 8 and (hour + mins/60) < 8.5 ):
-            state["sensorMotion1"]["status"] = int((random.randint(0, 100) > 50 ))
-        elif ((hour + mins/60) >= 17.5):
-            state["sensorMotion1"]["status"] = int((random.randint(0, 100) > 75 ))
-    else:
-        if ((hour + mins/60) >= 9):
-            state["sensorMotion1"]["status"] = int((random.randint(0, 100) > 65 ))
-
-
-def sensorMotion0(state): # Motion sensor in the balcony can be triggered by John between 7:30-8:30 and 17:30-00:00 on weekdays and between 9:00-24:00 on weekends
+def sensorMotion0(state): # Motion sensor in the Fridge | 8:00 - 17:00 on weekdays & 10:00 - 14:00 on weekends
     state["sensorMotion0"]["status"] = 0
     if days.index(day) <= 4: 
-        if ((hour + mins/60) >= 7.5 and (hour + mins/60) < 8.5 ):
-            state["sensorMotion0"]["status"] = int((random.randint(0, 100) > 95 ))
-        elif ((hour + mins/60) >= 17.5):
-            state["sensorMotion0"]["status"] = int((random.randint(0, 100) > 85 ))
+        if ((hour + mins/60) >= 8 and (hour + mins/60) < 17 ):
+            state["sensorMotion0"]["status"] = int((random.randint(0, 100) > 50 ))
     else:
-        if ((hour + mins/60) >= 9):
-            state["sensorMotion0"]["status"] = int((random.randint(0, 100) > 75 ))
+        if ((hour + mins/60) >= 10 and (hour + mins/60) < 14 ):
+            state["sensorMotion0"]["status"] = int((random.randint(0, 100) > 70 ))
+
+def sensorMotion1(state): # Motion sensor in the Freezer | 8:00 - 17:00 on weekdays & 10:00 - 14:00 on weekends
+    state["sensorMotion1"]["status"] = 0
+    if days.index(day) <= 4: 
+        if ((hour + mins/60) >= 8 and (hour + mins/60) < 17 ):
+            state["sensorMotion1"]["status"] = int((random.randint(0, 100) > 60 ))
+    else:
+        if ((hour + mins/60) >= 10 and (hour + mins/60) < 14 ):
+            state["sensorMotion1"]["status"] = int((random.randint(0, 100) > 80 ))
 
 
-def sensorTemp(state): # temperature changes and the warmest time of the day is 13:30, Monday is on average the coldest day and Sunday is on average the warmest day
+def sensorTemp(state): # Temperature changes
     prev_temp_0 = state["sensorTemp0"]["temp"]
     prev_temp_1 = state["sensorTemp1"]["temp"]
 
-    state["sensorTemp0"]["temp"] = int(20 - 0.75*( abs(hour - 13.5 + mins/60))) + days.index(day) 
-    if ((days.index(day) == 6) and (hour + mins/60) >= 16 and (hour + mins/60) <= 16.5): # On Sunday at 16:00 the temperature sensor malfunctioned
-        state["sensorTemp1"]["temp"] = 35
-    else:
-        state["sensorTemp1"]["temp"] = int(20 - 0.75*( abs(hour - 13.5 + mins/60))) + days.index(day) 
+    state["sensorTemp0"]["temp"] = int(10 - 0.75*( abs(hour - 13.5 + mins/60)))
+    state["sensorTemp1"]["temp"] = int(-3 - 0.75*( abs(hour - 13.5 + mins/60)))
     state["sensorTemp0"]["tempDif"] = state["sensorTemp0"]["temp"] - prev_temp_0
     state["sensorTemp1"]["tempDif"] = state["sensorTemp1"]["temp"] - prev_temp_1
     if((days.index(day) == 0) and hour==0 and mins==0):
@@ -97,40 +70,25 @@ def sensorTemp(state): # temperature changes and the warmest time of the day is 
         state["sensorTemp1"]["tempDif"] = 0
 
 
-def sensorMagnet0(state): # Bedroom door opens when John wakes up or goes to bed
+def sensorMagnet0(state): # Fridge Door | 8:00 - 17:00 on weekdays & 10:00 - 14:00 on weekends
     state["sensorMagnet0"]["status"] = 0
     if days.index(day) <= 4: 
-        if ((hour + mins/60) >= 7.5 and (hour + mins/60) < 8.5 ):
+        if ((hour + mins/60) >= 8 and (hour + mins/60) < 17 ):
             state["sensorMagnet0"]["status"] = int((random.randint(0, 100) > 50 ))
     else:
-        if ((hour + mins/60) >= 9 and (hour + mins/60) <= 10 ):
-            state["sensorMagnet0"]["status"] = int((random.randint(0, 100) > 50 ))
-    if days.index(day) <= 3 or days.index(day) == 6:
-        if ((hour + mins/60) >= 23):
-            state["sensorMagnet0"]["status"] = int((random.randint(0, 100) > 40 ))          
-    else:
-        if ((hour + mins/60) <= 2 ):
-            state["sensorMagnet0"]["status"] = int((random.randint(0, 100) > 40 ))
+        if ((hour + mins/60) >= 10 and (hour + mins/60) < 14 ):
+            state["sensorMagnet0"]["status"] = int((random.randint(0, 100) > 70 ))
 
 
-def sensorMagnet1(state): # Living room door opens when John leaves and returns from job
+def sensorMagnet1(state): # Freezer Door | 8:00 - 17:00 on weekdays & 10:00 - 14:00 on weekends
     state["sensorMagnet1"]["status"] = 0
-    if(((hour + mins/60) == 8.5 or (hour + mins/60) == 17.5) and days.index(day) <= 4):
-        state["sensorMagnet1"]["status"] = 1
-    else:
-        state["sensorMagnet1"]["status"] = 0
-
-
-def sensorMagnet2(state): # Kitchen door opens when John is eating
-    state["sensorMagnet2"]["status"] = 0
     if days.index(day) <= 4: 
-        if ((hour + mins/60) >= 7.5 and (hour + mins/60) < 8.5 ):
-            state["sensorMagnet2"]["status"] = int((random.randint(0, 100) > 50 ))
-        elif ((hour + mins/60) >= 17.5):
-            state["sensorMagnet2"]["status"] = int((random.randint(0, 100) > 85 ))
+        if ((hour + mins/60) >= 8 and (hour + mins/60) < 17 ):
+            state["sensorMagnet1"]["status"] = int((random.randint(0, 100) > 60 ))
     else:
-        if ((hour + mins/60) >= 9):
-            state["sensorMagnet2"]["status"] = int((random.randint(0, 100) > 90 ))
+        if ((hour + mins/60) >= 10 and (hour + mins/60) < 14 ):
+            state["sensorMagnet1"]["status"] = int((random.randint(0, 100) > 80 ))
+
         
 prev_state = state.copy()
 print('{')
@@ -138,21 +96,19 @@ for day in days:
     for hour in range(24):
         for mins in range(0,60,15):
             if(hour<10):
-                print('"2023-01-',days.index(day)+17, ' 0', hour,':', sep='', end='')
+                print('"2023-10-',days.index(day)+17, ' 0', hour,':', sep='', end='')
             else:
-                print('"2023-01-',days.index(day)+17, ' ', hour,':', sep='', end='')
+                print('"2023-10-',days.index(day)+17, ' ', hour,':', sep='', end='')
             if(mins==0):
                 print('0',mins,':00":',sep='',end='')
             else:
                 print(mins,':00":',sep='',end='')
 
-            sensorLights(state)
             sensorMotion0(state)
             sensorMotion1(state)
             sensorTemp(state)
             sensorMagnet0(state)
             sensorMagnet1(state)
-            sensorMagnet2(state)
             print_state(state)
             prev_state = state.copy()
 print('}')
