@@ -49,4 +49,13 @@ The devices we use:
 
 ## Scenario
 This IoT system is a simulation of a Food Warehouse <br>
-The Warehouse works on weekdays from 8:00 to 17:00 and on weekends from 10:00 to 14:00
+The owner of this company had an accident that made all of his inventory go to waste so he hired a team to build a smart monitoring system to prevent a similar accident. <br>
+The Warehouse works on weekdays from 8:00 to 17:00 and on weekends from 10:00 to 14:00 <br>
+The Food is stored in 2 places, 1 walk-in Freezer and a seperate room that is a Fridge. <br>
+Each of them has Temperature Sensors that mesure the exact temperature and calculate the difference between the previous timestamp. <br>
+We also have Magnet Sensors and Motion Sensors in each of these locations. <br>
+The Magnet Sensors are located in the door of each location and records when it is opened and closed. <br>
+The Motion Sensors are also located inside each location to prevent from anyone being trapped inside the Freezer or Fridge and have any accident. <br>
+This system is not intended to replace any security system as the states are reported from each sensor every 15 minutes to prevent any network bottleneck. <br>
+The technology that is used to actually send the data to our message broker is not presented nor analyzied in our project. <br>
+In our scenario we simulated the data from a full Week. <br>
